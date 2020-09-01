@@ -29,6 +29,7 @@ public class ListNode {
     public static ListNode randomCycleListNode(int length) {
         return randomCycleListNode(length, 0, 10);
     }
+
     public static ListNode randomCycleListNode(int length, int origin, int bound) {
         List<ListNode> list = new ArrayList<>();
         ListNode head = new ListNode(random.nextInt(origin, bound));
@@ -45,12 +46,15 @@ public class ListNode {
         cur.next = list.get(index);
         return head;
     }
+
     public static ListNode randomListNode(int length) {
         return randomListNode(length, 0, 10);
     }
+
     public static ListNode randomListNode(int length, int bound) {
         return randomListNode(length, 0, bound);
     }
+
     public static ListNode randomListNode(int length, int origin, int bound) {
         ListNode head = new ListNode(random.nextInt(origin, bound));
         ListNode cur = head;
@@ -61,6 +65,7 @@ public class ListNode {
         }
         return head;
     }
+
     public static void printListNode(ListNode head) {
 
         while (head != null) {
