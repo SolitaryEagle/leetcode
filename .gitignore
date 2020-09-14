@@ -1,4 +1,5 @@
 target/
+out/
 !.mvn/wrapper/maven-wrapper.jar
 IFLYTEK_FILE_IS_UNDEFINED
 
@@ -28,4 +29,3 @@ mvnw
 mvnw.cmd
 .mvn/
 
-pom.xml
