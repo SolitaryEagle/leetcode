@@ -6,6 +6,18 @@ package com.leetcode.程序员面试宝典;
  */
 public class 面试题_10_09_排序矩阵查找 {
 
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        int[][] matrix = {
+            {1, 4},
+            {2, 5}
+        };
+
+        System.out.println(solution.searchMatrix(matrix, 0));
+
+    }
+
 
     static class Solution {
 
@@ -31,39 +43,48 @@ public class 面试题_10_09_排序矩阵查找 {
 
             while (matrixBeginI <= matrixEndI && matrixBeginJ <= matrixEndJ) {
 
+                if (matrixBeginI == matrixEndI) {
+                    return findEqualsTargetInOneRow(matrix, matrixBeginJ, matrixEndJ, matrixBeginI,
+                        target);
+                }
+                if (matrixBeginJ == matrixEndJ) {
+                    return findEqualsTargetInOneColumn(matrix, matrixBeginI, matrixEndI,
+                        matrixBeginJ, target);
+                }
+
                 columnEnd = findLastLessThanTargetInRow(matrix, matrixBeginJ, matrixEndJ,
                     matrixBeginI, target);
                 if (columnEnd == null) {
                     return true;
+                }
+                if (columnEnd < matrixBeginJ || columnEnd > matrixEndJ) {
+                    return false;
                 }
                 rowBegin = findFirstGreaterThanTargetInColumn(matrix, matrixBeginI, matrixEndI,
                     columnEnd, target);
                 if (rowBegin == null) {
                     return true;
                 }
+                if (rowBegin < matrixBeginI || rowBegin > matrixEndI) {
+                    return false;
+                }
                 rowEnd = findLastLessThanTargetInColumn(matrix, matrixBeginI, matrixEndI,
                     matrixBeginJ, target);
                 if (rowEnd == null) {
                     return true;
+                }
+                if (rowEnd < matrixBeginI || rowEnd > matrixEndI) {
+                    return false;
                 }
                 columnBegin = findFirstGreaterThanTargetInRow(matrix, matrixBeginJ, matrixEndJ,
                     rowEnd, target);
                 if (columnBegin == null) {
                     return true;
                 }
-
-                if (rowBegin > rowEnd || columnBegin > columnEnd) {
+                if (columnBegin < matrixBeginJ || columnBegin > matrixEndJ) {
                     return false;
                 }
 
-                if (rowBegin.equals(rowEnd)) {
-                    return findEqualsTargetInOneRow(matrix, matrixBeginJ, matrixEndJ, rowBegin,
-                        target);
-                }
-                if (columnBegin.equals(columnEnd)) {
-                    return findEqualsTargetInOneColumn(matrix, matrixBeginI, matrixEndI,
-                        columnBegin, target);
-                }
                 matrixBeginI = rowBegin;
                 matrixEndI = rowEnd;
                 matrixBeginJ = columnBegin;
