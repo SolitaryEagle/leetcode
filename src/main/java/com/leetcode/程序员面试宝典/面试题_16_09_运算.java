@@ -18,9 +18,8 @@ public class 面试题_16_09_运算 {
 
  */
 
-
         Operations operations = new Operations();
-        int divide = operations.divide(-1870,1);
+        int divide = operations.divide(-1870, 1);
         System.out.println(divide);
 //
 //        System.out.println(operations.minus(7, -744));
@@ -41,45 +40,52 @@ public class 面试题_16_09_运算 {
 
         }
 
+        private int opposite(int num) {
+            // 不保证 int 的最小值的取反，即取反范围：-2^31 ~ 2^31
+            return (~num) + 1;
+        }
+
         public int minus(int a, int b) {
-            b = (~b) + 1;
-            return a + b;
+            return a + opposite(b);
+        }
+
+        private int multiAndDivSign(int a, int b) {
+            if ((a > 0 && b > 0) || (a < 0 && b < 0)) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+
+        private int abs(int num) {
+            if (num < 0) {
+                return opposite(num);
+            }
+            return num;
+        }
+
+        private int sign(int sign, int result) {
+            if (sign < 0) {
+                return opposite(result);
+            } else {
+                return result;
+            }
         }
 
         public int multiply(int a, int b) {
             if (a == 0 || b == 0) {
                 return 0;
             }
-
-            int sign;
-            if ((a > 0 && b > 0) || (a < 0 && b < 0)) {
-                sign = 1;
-            } else {
-                sign = -1;
-            }
-
-            if (a < 0) {
-                a = (~a) + 1;
-            }
-            if (b < 0) {
-                b = (~b) + 1;
-            }
-
             if (a == 1 || b == 1) {
-                if (sign < 0) {
-                    if (a == 1) {
-                        return (~b) + 1;
-                    } else {
-                        return (~a) + 1;
-                    }
-                } else {
-                    if (a == 1) {
-                        return b;
-                    } else {
-                        return a;
-                    }
-                }
+                return a == 1 ? b : a;
             }
+            if (a == -1 || b == -1) {
+                return a == -1 ? opposite(b) : opposite(a);
+            }
+
+            int sign = multiAndDivSign(a, b);
+            a = abs(a);
+            b = abs(b);
 
             int result = 0;
             int length = a < b ? a : b;
@@ -87,12 +93,7 @@ public class 面试题_16_09_运算 {
             for (int i = 0; i < length; ++i) {
                 result += base;
             }
-
-            if (sign < 0) {
-                return (~result) + 1;
-            } else {
-                return result;
-            }
+            return sign(sign, result);
         }
 
         public int divide(int a, int b) {
@@ -100,15 +101,6 @@ public class 面试题_16_09_运算 {
             if (a == 0 || b == 0) {
                 return 0;
             }
-
-            // 获取结果符号
-            int sign;
-            if ((a > 0 && b > 0) || (a < 0 && b < 0)) {
-                sign = 1;
-            } else {
-                sign = -1;
-            }
-
             // 除数特殊值: Integer.MIN_VALUE 判断
             if (b == Integer.MIN_VALUE) {
                 if (a == Integer.MIN_VALUE) {
@@ -117,20 +109,17 @@ public class 面试题_16_09_运算 {
                     return 0;
                 }
             }
-
             // 除数特殊值: 1 判断
             if (b == 1) {
                 return a;
             }
             // 除数特殊值: -1 判断
             if (b == -1) {
-                return (~a) + 1;
+                return opposite(a);
             }
-
-            // 除数取绝对值
-            if (b < 0) {
-                b = (~b) + 1;
-            }
+            // 获取结果符号
+            int sign = multiAndDivSign(a, b);
+            b = abs(b);
 
             // 对 被除数 进行特殊值处理: Integer.MIN_VALUE
             boolean aIsMin = false;
@@ -138,18 +127,9 @@ public class 面试题_16_09_运算 {
                 aIsMin = true;
                 a += 1;
             }
-
-            // 被除数取绝对值
-            if (a < 0) {
-                a = (~a) + 1;
-            }
-
+            a = abs(a);
             if (!aIsMin && a == b) {
-                if (sign < 0) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return sign(sign, 1);
             }
             if (a < b) {
                 return 0;
@@ -161,11 +141,12 @@ public class 面试题_16_09_运算 {
             int[] arr = new int[32];
             int[] res = new int[32];
             int validIndex = 0;
-            arr[0] = (~b) + 1;
+            arr[0] = opposite(b);
             res[0] = 1;
+            int oppositeA = opposite(a);
             for (int i = 0; i < 31; ++i) {
-                long value = (long)arr[i] + (long)arr[i];
-                if (value <= Integer.MIN_VALUE || value < (~a) + 1) {
+                long value = (long) arr[i] + (long) arr[i];
+                if (value <= Integer.MIN_VALUE || value < oppositeA) {
                     break;
                 }
                 arr[i + 1] = arr[i] + arr[i];
@@ -176,7 +157,7 @@ public class 面试题_16_09_运算 {
             // 进行除法计算
             for (int i = validIndex; i >= 0 && a >= b; i = i + (-1)) {
                 int curNegative = arr[i];
-                int curPositive = (~curNegative) + 1;
+                int curPositive = opposite(curNegative);
                 while (a >= curPositive) {
                     result += res[i];
                     a += arr[i];
@@ -185,11 +166,7 @@ public class 面试题_16_09_运算 {
                     a += 1;
                 }
             }
-            if (sign < 0) {
-                return (~result) + 1;
-            } else {
-                return result;
-            }
+            return sign(sign, result);
         }
     }
 
