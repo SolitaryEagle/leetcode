@@ -1,6 +1,5 @@
 package com.leetcode.程序员面试宝典;
 
-import com.leetcode.程序员面试宝典.面试题_16_20_T9键盘.Solution.TrieNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,15 +13,24 @@ public class 面试题_16_20_T9键盘 {
 
   public static void main(String[] args) {
     Solution solution = new Solution();
-
+    String num = "8733";
     String[] words = {"tree", "used"};
-    TrieNode trieNode = solution.generateTrieNode(words);
-    System.out.println(trieNode);
+    List<String> result = solution.getValidT9Words(num, words);
+    System.out.println(result);
   }
 
-
+  // 将 num 变成字典树，用 words 去查
   static
   class Solution {
+    public List<String> getValidT9Words(String num, String[] words) {
+      return null;
+    }
+  }
+
+  // 超出内存限制
+  // 将 words 变成字典树，用 num 去查
+  static
+  class Solution_1 {
 
     private static final Map<Character, char[]> num2Char = new HashMap<>();
 
@@ -45,19 +53,26 @@ public class 面试题_16_20_T9键盘 {
 
       TrieNode root = generateTrieNode(words);
 
-      List<Map<String, TrieNode>> cur = new ArrayList<>();
-      Map<String, TrieNode> rootMap = new HashMap<>();
-      rootMap.put("", root);
-      cur.add(rootMap);
+      List<TrieNode> cur = new ArrayList<>();
+      cur.add(root);
       List<TrieNode> next = new ArrayList<>();
 
       char[] numChars = num.toCharArray();
-      for (int i = 0; i < numChars.length; ++i) {
-        char[] chars = num2Char.get(numChars[i]);
-        for (Map<String, TrieNode> map : cur) {
-
+      for (char numChar : numChars) {
+        char[] chars = num2Char.get(numChar);
+        for (TrieNode node : cur) {
+          for (char ch : chars) {
+            if (node.children.containsKey(ch)) {
+              next.add(node.children.get(ch));
+            }
+          }
         }
+        cur = next;
+        next = new ArrayList<>();
+      }
 
+      for (TrieNode node : cur) {
+        result.add(node.prefix);
       }
 
       return result;
@@ -73,6 +88,7 @@ public class 面试题_16_20_T9键盘 {
             parent = parent.children.get(chars[i]);
           } else {
             TrieNode tmp = new TrieNode(chars[i]);
+            tmp.prefix = parent.prefix + chars[i];
             parent.children.put(chars[i], tmp);
             parent = tmp;
           }
@@ -84,12 +100,17 @@ public class 面试题_16_20_T9键盘 {
       return root;
     }
 
-    class TrieNode {
+    static class TrieNode {
 
       /**
        * 当前节点字符
        */
       char value;
+
+      /**
+       * 截止到当前节点组成的单词
+       */
+      String prefix = "";
 
       /**
        * 当前节点是否为单词末尾
